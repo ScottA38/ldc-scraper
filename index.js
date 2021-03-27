@@ -12,29 +12,6 @@ const outputFile = process.argv[2]
 const mapping = JSON.parse(fs.readFileSync('field_mappings.json', 'utf-8'));
 
 /**
- * Get data from target webpage as defined in options
- * @param object options
- */
-function getData(options) {
-  return new Promise (function (resolve, reject) {
-      https.get(options, function(resp) {
-        resp.setEncoding('utf8');
-        let data = "";
-
-        resp.on('data', function(chunk) {
-          data += chunk;
-        });
-
-        resp.on('end', function() {
-          resolve(data);
-        })
-      }).on("error", function (err) {
-        reject(err);
-    });
-  });
-}
-
-/**
  * Take jsdoc document parse list of relevant 'Li's from it
  * (as relevant to DOM structure of 'ldc.lloyds.com/marketdirectory')
  * @param object doc
@@ -75,30 +52,17 @@ function prepareOutputFile(outputFile, mapping) {
   }
 }
 
-/**
- * Construct url path and query params then constructPath
- * @param string mode
- * @param int pageNo
- */
-function constructPath(mode, pageNo) {
-  params = {
-    'mode': mode,
-    'page': pageNo
-  }
-  return "/market-directory/results?" + querystring.stringify(params)
-}
-
 prepareOutputFile(outputFile, mapping);
 
 let options = {
   hostname: "ldc.lloyds.com",
-  path: constructPath('cov', 1),
+  path: fetchers.constructPath('cov', 1),
   headers: {
     'User-Agent': 'Mozilla/5.0'
   }
 };
 
-getData(options)
+fetchers.getData(options)
 .then(function(result) {
   console.log("Initial request success");
   let dom = new JSDOM(result);
@@ -110,14 +74,14 @@ getData(options)
   for (let i = 1; i <= totalPages; i++) {
     let options = {
       hostname: "ldc.lloyds.com",
-      path: constructPath('cov', i),
+      path: fetchers.constructPath('cov', i),
       headers: {
         'User-Agent': 'Mozilla/5.0'
       }
     };
     let list;
 
-    getData(options)
+    fetchers.getData(options)
     .then(function(result) {
       console.log(`${options.hostname}/${options.path} success\n`);
       let dom = new JSDOM(result);
