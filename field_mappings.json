@@ -1,0 +1,34 @@
+[
+  {
+    "name": "company_name",
+    "selector": "li/div[@class='contact-details']/h2/text()"
+  },
+  {
+    "name": "registered_address",
+    "selector": "li/div[@class='contact-details']/address/text()"
+  },
+  {
+    "name": "website_address",
+    "selector": "li/div[@class='contact-details']/p/a/text()"
+  },
+  {
+    "name": "fca_ref",
+    "selector": "li/div[@class='contact-details']/p[em[contains(text(), 'FCA Ref.')]]/text()"
+  },
+  {
+    "name": "alternate_trading_name",
+    "selector": "li/ul[@class,'result-info']/li[strong[contains(text(), 'Alternative Trading Name(s)')]]/ul/text()"
+  },
+  {
+    "name": "accepts_business_from",
+    "selector": "li/ul[@class,'result-info']/li[strong[contains(text(), 'Accepts Business From')]]/ul/li/text()"
+  },
+  {
+    "name": "classes_of_business",
+    "selector": "li/ul[@class,'result-info']/li[strong[contains(text(), 'Classes of business')]]/ul/li/text()"
+  },
+  {
+    "name": "authorisation",
+    "selector": "li/ul[@class,'result-info']/li[strong[contains(text(), 'Authorisation')]]/ul/li/text()"
+  }
+]
