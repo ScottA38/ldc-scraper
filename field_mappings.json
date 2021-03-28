@@ -1,34 +1,34 @@
 [
   {
     "name": "company_name",
-    "selector": "li/div[@class='contact-details']/h2/text()"
+    "selector": "li > div.contact-details > h2"
   },
   {
     "name": "registered_address",
-    "selector": "li/div[@class='contact-details']/address/text()"
+    "selector": "li > div.contact-details > address"
   },
   {
     "name": "website_address",
-    "selector": "li/div[@class='contact-details']/p/a/text()"
+    "selector": "li > div.contact-details > p > a"
   },
   {
     "name": "fca_ref",
-    "selector": "li/div[@class='contact-details']/p[em[contains(text(), 'FCA Ref.')]]/text()"
+    "selector": "li > div.contact-details > p:contains(em:contains('FCA Ref.'))"
   },
   {
     "name": "alternate_trading_name",
-    "selector": "li/ul[@class,'result-info']/li[strong[contains(text(), 'Alternative Trading Name(s)')]]/ul/text()"
+    "selector": "li > ul.result-info > li:contains(strong:contains('Alternative Trading Name(s)')) > ul"
   },
   {
     "name": "accepts_business_from",
-    "selector": "li/ul[@class,'result-info']/li[strong[contains(text(), 'Accepts Business From')]]/ul/li/text()"
+    "selector": "li > ul.result-info > li:contains(strong:contains('Accepts Business From')) > ul > li"
   },
   {
     "name": "classes_of_business",
-    "selector": "li/ul[@class,'result-info']/li[strong[contains(text(), 'Classes of business')]]/ul/li/text()"
+    "selector": "li > ul.result-info > li:contains(strong:contains('Classes of business')) > ul > li"
   },
   {
     "name": "authorisation",
-    "selector": "li/ul[@class,'result-info']/li[strong[contains(text(), 'Authorisation')]]/ul/li/text()"
+    "selector": "li > ul.result-info > li:contains(strong:contains('Authorisation')) > ul > li"
   }
 ]

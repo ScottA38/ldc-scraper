@@ -3,10 +3,8 @@ const querystring = require('querystring');
 const fs = require('fs');
 const https = require('https');
 const jsdom = require('jsdom');
-const xpath = require('xpath-html');
+const cheerio = require('cheerio');
 const fetchers = require('./fetchers.js');
-const { parse } = require('parse5');
-const { serializeToString } = require('xmlserializer');
 const { JSDOM } = jsdom;
 const { readFileSync, writeFileSync, appendFileSync } = fs;
 
@@ -48,7 +46,7 @@ function prepareOutputFile(outputFile, mapping) {
       writeFileSync(outputFile, "")
     }
     let headings = mapping.map(item => item['name']);
-    appendFileSync(outputFile, headings.join());
+    appendFileSync(outputFile, headings.join() + "\n");
   } catch (err) {
     console.error(err);
   }
@@ -94,15 +92,21 @@ fetchers.getData(options)
       list.forEach(function (listItem) {
         let fieldValues = [];
 
+        // Loop through each data point required and attempt to parse the value
+        // from provided raw data using provided selector
         mapping.forEach(function(field) {
-          const dom = parse(listItem.outerHTML);
-          const xhtml = serializeToString(dom);
-
-          let querySpace = xpath.fromNode(xhtml);
-          let element = querySpace.findElement(field['selector']);
-          fieldValues.push(element.getText());
+          let $ = cheerio.load(listItem.outerHTML);
+          let result = $(field['selector']);
+          if (result.length) {
+            let text = result.first().text();
+            text = text.trim();
+            text = text.replace(/\r?\n|\r/g, "");
+            fieldValues.push(text);
+          } else {
+            fieldValues.push(null);
+          }
         })
-        appendFileSync(fieldValues.join());
+        appendFileSync(outputFile, fieldValues.join() + "\n");
       });
     })
     .catch(function (reason) {
