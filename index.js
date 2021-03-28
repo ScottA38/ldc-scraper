@@ -3,8 +3,10 @@ const querystring = require('querystring');
 const fs = require('fs');
 const https = require('https');
 const jsdom = require('jsdom');
-const xpath = require('xpath-html')
-
+const xpath = require('xpath-html');
+const fetchers = require('./fetchers.js');
+const { parse } = require('parse5');
+const { serializeToString } = require('xmlserializer');
 const { JSDOM } = jsdom;
 const { readFileSync, writeFileSync, appendFileSync } = fs;
 
@@ -93,9 +95,12 @@ fetchers.getData(options)
         let fieldValues = [];
 
         mapping.forEach(function(field) {
-          let querySpace = xpath.fromPageSource(listItem.outerHTML);
-          let text = querySpace.findElement(field['selector']);
-          fieldValues.push(text);
+          const dom = parse(listItem.outerHTML);
+          const xhtml = serializeToString(dom);
+
+          let querySpace = xpath.fromNode(xhtml);
+          let element = querySpace.findElement(field['selector']);
+          fieldValues.push(element.getText());
         })
         appendFileSync(fieldValues.join());
       });
