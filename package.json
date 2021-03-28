@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "cheerio": "*",
+    "csv-string": "^4.0.1",
     "jsdom": "^16.5.1",
     "querystring": "^0.2.1"
   }

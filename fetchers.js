@@ -34,7 +34,7 @@ const getData = function (options) {
 const constructPath = function (mode, pageNo) {
   params = {
     'mode': mode,
-    'page': pageNo
+    'c_page': pageNo
   }
   return "/market-directory/results?" + querystring.stringify(params)
 }

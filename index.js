@@ -4,7 +4,9 @@ const fs = require('fs');
 const https = require('https');
 const jsdom = require('jsdom');
 const cheerio = require('cheerio');
+const csvString = require('csv-string');
 const fetchers = require('./fetchers.js');
+const { stringify } = csvString;
 const { JSDOM } = jsdom;
 const { readFileSync, writeFileSync, appendFileSync } = fs;
 
@@ -17,9 +19,7 @@ const mapping = JSON.parse(fs.readFileSync('field_mappings.json', 'utf-8'));
  * @param object doc
  */
 function parseDataList(doc) {
-  let tab = doc.getElementById('CoverholderTabDetails');
-
-  return doc.querySelectorAll('.marketing-directories-results > ul > li');
+  return doc.querySelectorAll('#CoverholderTabDetails .marketing-directories-results > ul > li');
 }
 
 /**
@@ -69,6 +69,7 @@ fetchers.getData(options)
   let doc = dom.window.document;
 
   let totalPages = getNoPages(doc);
+  let reqErr = 0;
   console.log(`Total pages: ${totalPages}`)
 
   for (let i = 1; i <= totalPages; i++) {
@@ -79,17 +80,14 @@ fetchers.getData(options)
         'User-Agent': 'Mozilla/5.0'
       }
     };
-    let list;
 
     fetchers.getData(options)
     .then(function(result) {
-      console.log(`${options.hostname}/${options.path} success\n`);
+      console.log(`${options.hostname}${options.path} success\n`);
       let dom = new JSDOM(result);
       let doc = dom.window.document;
 
-      list = parseDataList(doc);
-
-      list.forEach(function (listItem) {
+      parseDataList(doc).forEach(function (listItem) {
         let fieldValues = [];
 
         // Loop through each data point required and attempt to parse the value
@@ -100,18 +98,19 @@ fetchers.getData(options)
           if (result.length) {
             let text = result.first().text();
             text = text.trim();
-            text = text.replace(/\r?\n|\r/g, "");
             fieldValues.push(text);
           } else {
-            fieldValues.push(null);
+            fieldValues.push("");
           }
         })
-        appendFileSync(outputFile, fieldValues.join() + "\n");
+        appendFileSync(outputFile, stringify(fieldValues));
       });
     })
     .catch(function (reason) {
+      reqErr++;
       console.error(`Failed to get page: ${reason} with options:`);
       console.error(options);
+      console.log(`Total failed requests: ${ reqErr }`);
     })
   }
 })
